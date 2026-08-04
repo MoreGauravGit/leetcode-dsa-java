@@ -10,71 +10,48 @@ class Solution {
         Queue<int[]> q = new ArrayDeque<>();
 
         int fresh = 0;
-
-        // 1. Find all initially rotten oranges
-        for (int i = 0; i < rows; i++) {
-
-            for (int j = 0; j < cols; j++) {
-
-                if (grid[i][j] == 2) {
-                    q.offer(new int[]{i, j});
+        for(int i = 0 ; i < rows ; i ++ ){
+            for ( int j = 0 ; j < cols ; j++ ){
+                if (grid[i][j] == 1){
+                    fresh ++ ; 
                 }
-
-                else if (grid[i][j] == 1) {
-                    fresh++;
+                else if(grid[i][j] == 2){
+                    q.offer(new int[]{i,j}) ; 
                 }
             }
         }
 
-        // Up, Down, Left, Right
-        int[] dx = {-1, 1, 0, 0};
-        int[] dy = {0, 0, -1, 1};
+        int[] dx = {-1 , 1,0, 0} ; 
+        int[] dy = {0 ,0 ,-1 ,1} ;
 
-        int minutes = 0;
+        int min = 0 ; 
 
-        // 2. BFS
-        while (!q.isEmpty() && fresh > 0) {
+        while (!q.isEmpty() && fresh > 0 ){
+            int size = q.size() ; 
 
-            int size = q.size();
+            for (int i = 0 ; i < size ; i++){
+                int[] current = q.poll() ; 
+                int x = current[0] ; 
+                int y = current[1] ; 
 
-            // Process all oranges rotten at current minute
-            for (int i = 0; i < size; i++) {
-
-                int[] current = q.poll();
-
-                int row = current[0];
-                int col = current[1];
-
-                // Check four directions
-                for (int d = 0; d < 4; d++) {
-
-                    int newRow = row + dx[d];
-                    int newCol = col + dy[d];
-
-                    // Check boundary + fresh orange
-                    if (newRow >= 0 && newRow < rows &&
-                        newCol >= 0 && newCol < cols &&
-                        grid[newRow][newCol] == 1) {
-
-                        // Make fresh orange rotten
-                        grid[newRow][newCol] = 2;
-
-                        fresh--;
-
-                        // Add newly rotten orange to queue
-                        q.offer(new int[]{newRow, newCol});
-                    }
+                for (int j = 0 ; j < 4 ; j++){
+                    int newx = dx[j] + x ; 
+                    int newy = dy[j] + y ;
+                    
+                    if (newx >= 0 && newx < rows && 
+                    newy < cols && newy >= 0 && 
+                    grid[newx][newy] == 1){
+                        grid[newx][newy] = 2 ; 
+                        fresh -- ; 
+                        q.offer(new int[]{newx, newy} ) ; 
+                    } 
                 }
             }
+            min++ ; 
+        } 
 
-            minutes++;
-        }
+    if (fresh > 0 ){return -1 ; } 
 
-        // Fresh oranges still remaining
-        if (fresh > 0) {
-            return -1;
-        }
-
-        return minutes;
+    return min ; 
     }
 }
