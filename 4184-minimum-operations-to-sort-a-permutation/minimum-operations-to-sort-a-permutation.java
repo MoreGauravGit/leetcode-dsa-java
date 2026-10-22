@@ -1,54 +1,47 @@
-
 class Solution {
     public int minOperations(int[] nums) {
         int n = nums.length;
+        int start = nums[0];
 
-        int[] reversed = new int[n];
-        for (int i = 0; i < n; i++) {
-            reversed[i] = nums[n - 1 - i];
-        }
-
-        int ans = Integer.MAX_VALUE;
-
-        // Case 1: Rotate the original array
-        int p = rotationIndex(nums);
-
-        if (p != -1) {
-            if (p == 0) {
-                return 0;
-            }
-
-            // Direct left rotations, or use two reversals
-            ans = Math.min(p, n - p + 2);
-        }
-
-        // Case 2: Use one reversal and rotations
-        int q = rotationIndex(reversed);
-
-        if (q != -1) {
-            ans = Math.min(ans, 1 + Math.min(q, n - q));
-        }
-
-        return ans == Integer.MAX_VALUE ? -1 : ans;
-    }
-
-    private int rotationIndex(int[] nums) {
-        int n = nums.length;
-        int pos = -1;
+        // Check increasing cyclic order
+        boolean increasing = true;
 
         for (int i = 0; i < n; i++) {
-            if (nums[i] == 0) {
-                pos = i;
+            if (nums[i] != (start + i) % n) {
+                increasing = false;
                 break;
             }
         }
 
+        int ans = Integer.MAX_VALUE;
+
+        if (increasing) {
+            int rotations = (n - start) % n;
+
+            ans = Math.min(rotations, start + 2);
+        }
+
+        // Check decreasing cyclic order
+        boolean decreasing = true;
+
         for (int i = 0; i < n; i++) {
-            if (nums[(pos + i) % n] != i) {
-                return -1;
+            if (nums[i] != (start - i + n) % n) {
+                decreasing = false;
+                break;
             }
         }
 
-        return pos;
+        if (decreasing) {
+            int rotations = n - 1 - start;
+
+            int operations = Math.min(
+                rotations,
+                n - rotations
+            ) + 1;
+
+            ans = Math.min(ans, operations);
+        }
+
+        return ans == Integer.MAX_VALUE ? -1 : ans;
     }
 }
